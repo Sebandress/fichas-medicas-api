@@ -141,5 +141,3 @@ Notas de desarrollo
 - Los tests se ejecutan con `mongodb-memory-server`; los datos no persisten entre ejecuciones.
 - Actualmente las rutas `POST /pacientes` y `POST /pacientes/:id/consulta` requieren autenticación JWT; los `GET` son públicos por simplicidad del MVP.
 
-Si quieres que proteja también los endpoints `GET` o que añada roles/permiso por usuario (p. ej. médico vs admin), dime y lo implemento.
-
