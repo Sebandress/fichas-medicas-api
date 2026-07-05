@@ -92,6 +92,7 @@ Abre `http://localhost:3000/api-docs` una vez corra la app para explorar y proba
   - Ejemplo body mínimo: `{ "nombre": "Juan Pérez", "rut": "12.345.678-9" }`
 - `POST /pacientes/:id/consulta` — agregar consulta (requiere auth)
   - Ejemplo body: `{ "fecha": "2026-05-01", "motivo": "Dolor", "diagnostico": "Migraña" }`
+- `DELETE /pacientes/:id` — eliminar paciente (requiere auth)
 
 Ejemplos rápidos (curl)
 

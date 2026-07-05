@@ -46,4 +46,25 @@ describe('Pacientes API', () => {
     expect(upd.status).toBe(200);
     expect(upd.body.consultas.length).toBe(1);
   });
+
+  it('should list pacientes by nombre query', async () => {
+    const paciente = { nombre: 'María', rut: '33.333.333-3' };
+    await request(app).post('/pacientes').set('Authorization', `Bearer ${token}`).send(paciente);
+    const res = await request(app).get('/pacientes').query({ nombre: 'María' });
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.some((p: any) => p.rut === paciente.rut)).toBe(true);
+  });
+
+  it('should delete a paciente', async () => {
+    const paciente = { nombre: 'Pedro', rut: '44.444.444-4' };
+    const res = await request(app).post('/pacientes').set('Authorization', `Bearer ${token}`).send(paciente);
+    const id = res.body._id;
+    const del = await request(app).delete(`/pacientes/${id}`).set('Authorization', `Bearer ${token}`);
+    expect(del.status).toBe(200);
+    expect(del.body.message).toBe('Paciente deleted successfully');
+
+    const get = await request(app).get(`/pacientes/${encodeURIComponent(paciente.rut)}`);
+    expect(get.status).toBe(404);
+  });
 });

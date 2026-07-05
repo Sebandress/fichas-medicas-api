@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPaciente, getPacienteByRut, addConsulta, listPacientes } from '../controllers/pacientesController';
+import { createPaciente, getPacienteByRut, addConsulta, listPacientes, deletePaciente } from '../controllers/pacientesController';
 import { requireAuth } from '../middleware/auth';
 
 const router = Router();
@@ -122,5 +122,33 @@ router.post('/', requireAuth, createPaciente);
  *               type: object
  */
 router.post('/:id/consulta', requireAuth, addConsulta);
+
+/**
+ * @openapi
+ * /pacientes/{id}:
+ *   delete:
+ *     summary: Eliminar paciente por ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Paciente eliminado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Paciente no encontrado
+ */
+router.delete('/:id', requireAuth, deletePaciente);
 
 export default router;

@@ -34,6 +34,55 @@ const swaggerSpec = swaggerJsdoc({
           bearerFormat: 'JWT',
         },
       },
+      schemas: {
+        AuthRequest: {
+          type: 'object',
+          properties: {
+            username: { type: 'string' },
+            password: { type: 'string' },
+          },
+          required: ['username', 'password'],
+        },
+        TokenResponse: {
+          type: 'object',
+          properties: {
+            token: { type: 'string' },
+          },
+        },
+        Paciente: {
+          type: 'object',
+          properties: {
+            _id: { type: 'string' },
+            nombre: { type: 'string' },
+            rut: { type: 'string' },
+            edad: { type: 'integer' },
+            direccion: { type: 'string' },
+            alergias: {
+              type: 'array',
+              items: { type: 'string' },
+            },
+            consultas: {
+              type: 'array',
+              items: { $ref: '#/components/schemas/Consulta' },
+            },
+            examenes: {
+              type: 'array',
+              items: { type: 'string' },
+            },
+            createdAt: { type: 'string', format: 'date-time' },
+            updatedAt: { type: 'string', format: 'date-time' },
+          },
+        },
+        Consulta: {
+          type: 'object',
+          properties: {
+            fecha: { type: 'string', format: 'date' },
+            motivo: { type: 'string' },
+            diagnostico: { type: 'string' },
+          },
+          required: ['fecha', 'motivo', 'diagnostico'],
+        },
+      },
     },
   },
   apis: ['./src/routes/*.ts'],

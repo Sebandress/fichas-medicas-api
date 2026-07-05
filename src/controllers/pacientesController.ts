@@ -38,6 +38,18 @@ export async function addConsulta(req: Request, res: Response) {
   }
 }
 
+export async function deletePaciente(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) return res.status(400).json({ error: 'Invalid id' });
+    const paciente = await Paciente.findByIdAndDelete(id);
+    if (!paciente) return res.status(404).json({ error: 'Paciente not found' });
+    return res.json({ message: 'Paciente deleted successfully' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+}
+
 export async function listPacientes(req: Request, res: Response) {
   try {
     const { nombre } = req.query as any;
