@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createPaciente, getPacienteByRut, addConsulta, listPacientes, deletePaciente } from '../controllers/pacientesController';
-import { requireAuth } from '../middleware/auth';
+import { requireAuth, requireRole } from '../middleware/auth';
 
 const router = Router();
 
@@ -149,6 +149,6 @@ router.post('/:id/consulta', requireAuth, addConsulta);
  *       404:
  *         description: Paciente no encontrado
  */
-router.delete('/:id', requireAuth, deletePaciente);
+router.delete('/:id', requireAuth, requireRole('admin'), deletePaciente);
 
 export default router;

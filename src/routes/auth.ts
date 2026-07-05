@@ -19,6 +19,11 @@ const router = Router();
  *                 type: string
  *               password:
  *                 type: string
+ *               role:
+ *                 type: string
+ *                 enum: [user, admin]
+ *               adminSecret:
+ *                 type: string
  *             required:
  *               - username
  *               - password
@@ -27,6 +32,8 @@ const router = Router();
  *         description: Usuario registrado correctamente
  *       400:
  *         description: Datos inválidos o usuario ya existe
+ *       403:
+ *         description: No autorizado para crear un usuario admin
  */
 router.post('/register', register);
 

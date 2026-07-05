@@ -1,3 +1,5 @@
+process.env.ADMIN_SECRET = 'testsecret';
+
 import request from 'supertest';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -6,6 +8,7 @@ import app from '../src/app';
 let mongoServer: MongoMemoryServer;
 
 beforeAll(async () => {
+  process.env.ADMIN_SECRET = 'testsecret';
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
   await mongoose.connect(uri);
@@ -17,18 +20,22 @@ afterAll(async () => {
 });
 
 describe('Pacientes API', () => {
-  let token: string;
+  let userToken: string;
+  let adminToken: string;
 
   beforeAll(async () => {
-    // register and login
     await request(app).post('/auth/register').send({ username: 'test', password: 'secret' });
     const login = await request(app).post('/auth/login').send({ username: 'test', password: 'secret' });
-    token = login.body.token;
+    userToken = login.body.token;
+
+    await request(app).post('/auth/register').send({ username: 'admin', password: 'secret', role: 'admin', adminSecret: 'testsecret' });
+    const adminLogin = await request(app).post('/auth/login').send({ username: 'admin', password: 'secret' });
+    adminToken = adminLogin.body.token;
   });
 
   it('should create and fetch a patient', async () => {
     const paciente = { nombre: 'Juan Perez', rut: '12.345.678-9' };
-    const res = await request(app).post('/pacientes').set('Authorization', `Bearer ${token}`).send(paciente);
+    const res = await request(app).post('/pacientes').set('Authorization', `Bearer ${userToken}`).send(paciente);
     expect(res.status).toBe(201);
     expect(res.body.rut).toBe(paciente.rut);
 
@@ -39,28 +46,37 @@ describe('Pacientes API', () => {
 
   it('should add a consulta', async () => {
     const paciente = { nombre: 'Ana', rut: '11.111.111-1' };
-    const res = await request(app).post('/pacientes').set('Authorization', `Bearer ${token}`).send(paciente);
+    const res = await request(app).post('/pacientes').set('Authorization', `Bearer ${userToken}`).send(paciente);
     const id = res.body._id;
     const consulta = { fecha: '2026-05-01', motivo: 'Dolor', diagnostico: 'Migraña' };
-    const upd = await request(app).post(`/pacientes/${id}/consulta`).set('Authorization', `Bearer ${token}`).send(consulta);
+    const upd = await request(app).post(`/pacientes/${id}/consulta`).set('Authorization', `Bearer ${userToken}`).send(consulta);
     expect(upd.status).toBe(200);
     expect(upd.body.consultas.length).toBe(1);
   });
 
   it('should list pacientes by nombre query', async () => {
     const paciente = { nombre: 'María', rut: '33.333.333-3' };
-    await request(app).post('/pacientes').set('Authorization', `Bearer ${token}`).send(paciente);
+    await request(app).post('/pacientes').set('Authorization', `Bearer ${userToken}`).send(paciente);
     const res = await request(app).get('/pacientes').query({ nombre: 'María' });
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.some((p: any) => p.rut === paciente.rut)).toBe(true);
   });
 
-  it('should delete a paciente', async () => {
+  it('should forbid delete for non-admin users', async () => {
     const paciente = { nombre: 'Pedro', rut: '44.444.444-4' };
-    const res = await request(app).post('/pacientes').set('Authorization', `Bearer ${token}`).send(paciente);
+    const res = await request(app).post('/pacientes').set('Authorization', `Bearer ${userToken}`).send(paciente);
     const id = res.body._id;
-    const del = await request(app).delete(`/pacientes/${id}`).set('Authorization', `Bearer ${token}`);
+    const del = await request(app).delete(`/pacientes/${id}`).set('Authorization', `Bearer ${userToken}`);
+    expect(del.status).toBe(403);
+  });
+
+  it('should delete a paciente as admin', async () => {
+    const paciente = { nombre: 'Pedro Admin', rut: '55.555.555-5' };
+    const res = await request(app).post('/pacientes').set('Authorization', `Bearer ${userToken}`).send(paciente);
+    expect(res.status).toBe(201);
+    const id = res.body._id;
+    const del = await request(app).delete(`/pacientes/${id}`).set('Authorization', `Bearer ${adminToken}`);
     expect(del.status).toBe(200);
     expect(del.body.message).toBe('Paciente deleted successfully');
 
