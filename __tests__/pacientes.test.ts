@@ -33,6 +33,12 @@ describe('Pacientes API', () => {
     adminToken = adminLogin.body.token;
   });
 
+  it('should redirect root to swagger docs', async () => {
+    const res = await request(app).get('/').redirects(0);
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/api-docs');
+  });
+
   it('should create and fetch a patient', async () => {
     const paciente = { nombre: 'Juan Perez', rut: '12.345.678-9' };
     const res = await request(app).post('/pacientes').set('Authorization', `Bearer ${userToken}`).send(paciente);

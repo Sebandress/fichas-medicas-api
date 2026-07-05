@@ -93,6 +93,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: t
 app.use('/pacientes', pacientesRouter);
 app.use('/auth', authRouter);
 
-app.get('/', (req, res) => res.json({ ok: true }));
+app.get('/', (req, res) => {
+  res.redirect('/api-docs');
+});
 
 export default app;
