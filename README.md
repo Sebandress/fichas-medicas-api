@@ -70,6 +70,29 @@ Documentación interactiva
 
 Abre `http://localhost:3000/api-docs` una vez corra la app para explorar y probar los endpoints via Swagger UI.
 
+### Probar en Swagger UI
+
+1. Abre `http://localhost:3000/api-docs`
+2. Usa `POST /auth/register` para crear un usuario.
+3. Usa `POST /auth/login` para obtener el token JWT.
+4. Haz clic en el botón `Authorize` en Swagger UI.
+5. Ingresa el token en el formato `Bearer <tu_token>` y confirma.
+6. Prueba los endpoints protegidos como `POST /pacientes` y `POST /pacientes/{id}/consulta`.
+
+### Endpoints interactivos
+
+- `POST /auth/register` — registrar usuario
+  - Body: `{ "username": "user", "password": "pass" }`
+- `POST /auth/login` — obtener token
+  - Body: `{ "username": "user", "password": "pass" }`
+  - Respuesta: `{ "token": "<jwt>" }`
+- `GET /pacientes?nombre=` — listar pacientes (no requiere auth)
+- `GET /pacientes/:rut` — obtener paciente por RUT (no requiere auth)
+- `POST /pacientes` — crear paciente (requiere header `Authorization: Bearer <token>`)
+  - Ejemplo body mínimo: `{ "nombre": "Juan Pérez", "rut": "12.345.678-9" }`
+- `POST /pacientes/:id/consulta` — agregar consulta (requiere auth)
+  - Ejemplo body: `{ "fecha": "2026-05-01", "motivo": "Dolor", "diagnostico": "Migraña" }`
+
 Ejemplos rápidos (curl)
 
 1) Registrar y loguear:
