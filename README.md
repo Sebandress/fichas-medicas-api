@@ -130,8 +130,9 @@ docker run -e MONGO_URI="mongodb://host.docker.internal:27017/fichasdb" -p 3000:
 Despliegue (Render)
 
 - Subir el repo a GitHub.
-- Conectar repo en Render, seleccionar `npm run build` como build command y `npm start` como start command.
-- Añadir variables de entorno (`MONGO_URI`, `JWT_SECRET`).
+- Conectar repo en Render, seleccionar `npm install && npm run build` como build command y `npm start` como start command.
+- Añadir variables de entorno (`MONGO_URI`, `JWT_SECRET`, `ADMIN_SECRET`).
+- También puedes usar el archivo `render.yaml` incluido para crear el servicio automáticamente.
 
 CI
 
