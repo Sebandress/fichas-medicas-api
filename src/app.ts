@@ -20,7 +20,21 @@ if (process.env.NODE_ENV !== 'test') {
 const swaggerSpec = swaggerJsdoc({
   definition: {
     openapi: '3.0.0',
-    info: { title: 'Fichas Médicas API', version: '0.1.0' },
+    info: {
+      title: 'Fichas Médicas API',
+      version: '0.1.0',
+      description: 'Documentación interactiva de la API para fichas médicas con autenticación JWT.',
+    },
+    servers: [{ url: 'http://localhost:3000' }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
   apis: ['./src/routes/*.ts'],
 });

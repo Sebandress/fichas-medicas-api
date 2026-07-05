@@ -17,6 +17,12 @@ const router = Router();
  *     responses:
  *       200:
  *         description: Lista de pacientes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
  */
 router.get('/', listPacientes);
 
@@ -34,6 +40,10 @@ router.get('/', listPacientes);
  *     responses:
  *       200:
  *         description: Paciente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
  */
 router.get('/:rut', getPacienteByRut);
 
@@ -42,15 +52,33 @@ router.get('/:rut', getPacienteByRut);
  * /pacientes:
  *   post:
  *     summary: Crear paciente
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *               rut:
+ *                 type: string
+ *               edad:
+ *                 type: integer
+ *               direccion:
+ *                 type: string
+ *             required:
+ *               - nombre
+ *               - rut
  *     responses:
  *       201:
  *         description: Paciente creado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
  */
 router.post('/', requireAuth, createPaciente);
 
@@ -59,6 +87,8 @@ router.post('/', requireAuth, createPaciente);
  * /pacientes/{id}/consulta:
  *   post:
  *     summary: Agregar consulta a paciente
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -71,9 +101,25 @@ router.post('/', requireAuth, createPaciente);
  *         application/json:
  *           schema:
  *             type: object
+ *             properties:
+ *               fecha:
+ *                 type: string
+ *                 format: date
+ *               motivo:
+ *                 type: string
+ *               diagnostico:
+ *                 type: string
+ *             required:
+ *               - fecha
+ *               - motivo
+ *               - diagnostico
  *     responses:
  *       200:
  *         description: Paciente actualizado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
  */
 router.post('/:id/consulta', requireAuth, addConsulta);
 
